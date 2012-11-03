@@ -21,20 +21,19 @@ class Score < ActiveRecord::Base
         | assessment |
         #questionnaire = Questionnaire.find(assessment.)
 
-        curr_score = get_total_score(:response => assessment, :questions => questions, :q_types => q_types)
+        if @invalid!=1
+          curr_score = get_total_score(:response => assessment, :questions => questions, :q_types => q_types)
+          if curr_score > scores[:max]
+            scores[:max] = curr_score
+          elsif curr_score < scores[:min]
+            scores[:min] = curr_score
+          end
 
-        if curr_score > scores[:max]
-          scores[:max] = curr_score
-        end
-        if curr_score < scores[:min]
-          scores[:min] = curr_score
-        end
+        else
+            length_of_assessments=length_of_assessments-1
+            curr_score=0
+          end
 
-        # Check if the review is invalid. If is not valid do not include in score calculation
-        if  @invalid==1
-          length_of_assessments=length_of_assessments-1
-          curr_score=0
-        end
         total_score += curr_score       
       }
       if(length_of_assessments!=0)
